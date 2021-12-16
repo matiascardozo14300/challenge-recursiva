@@ -1,11 +1,13 @@
 package models;
 
 public class Persona {
+	
 	private String nombre;
 	private int edad;
 	private String equipo;
 	private String estadoCivil;
 	private String nivelEstudios;
+	
 	public Persona(String nombre, int edad, String equipo, String estadoCivil, String nivelEstudios) {
 		this.nombre = nombre;
 		this.edad = edad;
@@ -13,6 +15,7 @@ public class Persona {
 		this.estadoCivil = estadoCivil;
 		this.nivelEstudios = nivelEstudios;
 	}
+	
 	public Persona() {
 		
 	}
@@ -45,8 +48,5 @@ public class Persona {
 	}
 	public void setNivelEstudios(String nivelEstudios) {
 		this.nivelEstudios = nivelEstudios;
-	}
-	public String mostrarPuntoTres() {
-		return "Nombre: " + nombre + " - " + "Edad: " + edad + " - " + "Equipo: " + equipo;
 	}
 }

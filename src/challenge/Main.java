@@ -35,15 +35,16 @@ public class Main {
 			
 			//HashMap
 			Map<String, Integer> hashRiver = new HashMap<String, Integer>();
-			Map<String, Integer> hashClubes = new HashMap<String, Integer>();
+			Map<String, Integer> hashEquipos = new HashMap<String, Integer>();
+			Map<String, List<Double>> hashEdades = new HashMap<String, List<Double>>();
 			
 			//Array
 			List<Persona> personas = new ArrayList<Persona>();
-			List<Integer> listaPuntoCuatro = new ArrayList<Integer>();
-			List<Double> listaPuntoCinco = new ArrayList<Double>();
+			List<Integer> listaRiver = new ArrayList<Integer>();
+			List<Integer> listaEquipos = new ArrayList<Integer>();
 			
 			//Set
-			Set<String> clubes = new HashSet<String>();
+			Set<String> equipos = new HashSet<String>();
 						
 			
 			while ((line = br.readLine()) != null) {
@@ -51,7 +52,7 @@ public class Main {
 				
 				Persona p = new Persona(data[0], Integer.parseInt(data[1]), data[2], data[3], data[4]);
 				
-				clubes.add(p.getEquipo());
+				equipos.add(p.getEquipo());
 				
 				personas.add(p);
 			}
@@ -79,30 +80,21 @@ public class Main {
 					.filter(persona -> persona.getNivelEstudios().equalsIgnoreCase("Universitario"))
 					.collect(Collectors.toList());
 			
-			List<Persona> casadosUniDos = new ArrayList<Persona>();
+			List<Persona> casadosUniCien = casadosUni.stream().limit(100).collect(Collectors.toList());
 			
-			for(Persona p : casadosUni) {
-				if (countCien < 100) {
-					casadosUniDos.add(p);
-					countCien ++;
-				}else {
-					break;
-				}
-			}
-			
-			List<Persona> casadosUniOrdenados = casadosUniDos.stream()
+			List<Persona> casadosUniOrdenados = casadosUniCien.stream()
 					.sorted(Comparator.comparing(Persona::getEdad))
 					.collect(Collectors.toList());
 			
-			String format = "%-5s%s%n";
 			countCien = 0;
 			
 			System.out.println();
 			System.out.println("3. Las primeras 100 personas casadas, con estudios Universitarios, ordenadas por edad son: ");
+			System.out.printf("    %-6s%-12s%-12s %-12s\n", "N°", "Nombre", "Edad", "Equipo");
 			
 			for(Persona p : casadosUniOrdenados) {
 				countCien ++;
-				System.out.printf(format, "", countCien + "° " + p.mostrarPuntoTres());
+				System.out.printf("    %-6s%-12s %-12d%-6s\n", countCien + "° ", p.getNombre(), p.getEdad(), p.getEquipo());
 			}
 			
 			
@@ -118,22 +110,23 @@ public class Main {
 			});
 			
 			for (String i : hashRiver.keySet()) {
-				listaPuntoCuatro.add(hashRiver.get(i));
+				listaRiver.add(hashRiver.get(i));
 			}
 			
-			Set<Integer> setPuntoCuatro = new HashSet<>(listaPuntoCuatro);
-			List<Integer> listaDosPuntoCuatro = new ArrayList<>(setPuntoCuatro);
-			Collections.sort(listaDosPuntoCuatro);
-			Collections.reverse(listaDosPuntoCuatro);
+			Set<Integer> setRiver = new HashSet<>(listaRiver);
+			List<Integer> listaRiverOrdenada = new ArrayList<>(setRiver);
+			Collections.sort(listaRiverOrdenada);
+			Collections.reverse(listaRiverOrdenada);
 			
 			System.out.println();
 			System.out.println("4. Los 5 nombres más comunes entre los hinchas de River son: ");
+			System.out.printf("    %-6s%-12s%6s\n", "N°", "Nombre", "Cantidad");
 			
-			for (int value:listaDosPuntoCuatro) {
+			for (int value:listaRiverOrdenada) {
 				for (String key : getKeys(hashRiver, value)) {
 					if(countCinco<5) {
 						countCinco ++;
-						System.out.printf(format, "",countCinco + "° " + key + " (" + value + ")");
+						System.out.printf("    %-6s%-12s%6d\n",countCinco + "° ", key, value);
 					}else {
 						break;
 					}
@@ -142,45 +135,59 @@ public class Main {
 			
 			
 			//Punto 5
-			for (String c : clubes) {
+			for (String e : equipos) {
+				List<Double> listaEdades = new ArrayList<Double>();
+				
 				Double promedio = personas.stream()
-					.filter(persona -> persona.getEquipo().equalsIgnoreCase(c))
-					.mapToDouble(Persona::getEdad)
-					.average()
-					.orElse(Double.NaN);
-				
-				listaPuntoCinco.add(promedio);
-				
-				personas.stream()
-					.filter(persona -> persona.getEquipo().equalsIgnoreCase(c))
-					.min(Comparator.comparing(Persona::getEdad))
-					.ifPresent(persona -> {
-						listaPuntoCinco.add(Double.valueOf(persona.getEdad()));
-					});
-				
-				personas.stream()
-					.filter(persona -> persona.getEquipo().equalsIgnoreCase(c))
-					.max(Comparator.comparing(Persona::getEdad))
-					.ifPresent(persona -> {
-						listaPuntoCinco.add(Double.valueOf(persona.getEdad()));
-					});
+						.filter(persona -> persona.getEquipo().equalsIgnoreCase(e))
+						.mapToDouble(Persona::getEdad)
+						.average()
+						.orElse(Double.NaN);
+					
+					listaEdades.add(promedio);
+					
+					personas.stream()
+						.filter(persona -> persona.getEquipo().equalsIgnoreCase(e))
+						.min(Comparator.comparing(Persona::getEdad))
+						.ifPresent(persona -> {
+							listaEdades.add(Double.valueOf(persona.getEdad()));
+						});
+					
+					personas.stream()
+						.filter(persona -> persona.getEquipo().equalsIgnoreCase(e))
+						.max(Comparator.comparing(Persona::getEdad))
+						.ifPresent(persona -> {
+							listaEdades.add(Double.valueOf(persona.getEdad()));
+						});
+					
+					hashEdades.put(e, listaEdades);
 			}
 			
 			System.out.println();
 			System.out.println("5. Listado de equipos con el promedio de edad de sus socios, la menor edad registrada y la mayor edad registrada: ");
 			
-			int countClub = 0;
-			for (String c : clubes) {
-				while (countClub == 0) {
-					System.out.printf(format, "", "- Club: " + c + " Promedio Edad: " + String.format("%.2f",listaPuntoCinco.get(countClub)) + " Menor Edad: " + Math.round(listaPuntoCinco.get(countClub + 1)) + " Mayor Edad: " + Math.round(listaPuntoCinco.get(countClub + 2)) );
-					listaPuntoCinco.remove(countClub);
-					listaPuntoCinco.remove(countClub);
-					listaPuntoCinco.remove(countClub);
-					countClub ++;
-				}
-				countClub=0;
+			Map<String, List<Persona>> groupByEquipo = personas.stream()
+					.collect(Collectors.groupingBy(Persona::getEquipo));
+			
+			groupByEquipo.forEach((equipo, personas2) -> {
+				hashEquipos.put(equipo, personas2.size());
+			});
+			
+			for (String i : hashEquipos.keySet()) {
+				listaEquipos.add(hashEquipos.get(i));
 			}
 			
+			Set<Integer> setPuntoCinco = new HashSet<>(listaEquipos);
+			List<Integer> listaEquiposDos = new ArrayList<>(setPuntoCinco);
+			Collections.sort(listaEquiposDos);
+			Collections.reverse(listaEquiposDos);
+			
+			System.out.printf("    %-20s%-20s%-20s %6s\n", "Equipo", "Promedio Edad", "Menor Edad", "Mayor Edad");
+			for (int value:listaEquiposDos) {
+				for (String key : getKeys(hashEquipos, value)) {
+					System.out.printf("    %-20s     %-19.2f%-20.0f%3.0f\n", key, hashEdades.get(key).get(0), hashEdades.get(key).get(1), hashEdades.get(key).get(2));
+				}
+			}
 			
 		}
 		catch (IOException e) {
