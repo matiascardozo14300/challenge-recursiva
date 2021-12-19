@@ -23,12 +23,10 @@ public class Main {
 		
 		try {
 			
-			Scanner entrada = new Scanner(System.in);
-			System.out.println("Ingrese la ruta del archivo '.csv': ");
-			String ruta = entrada.nextLine();
-			entrada.close();
+			File f = new File("src/assets/socios.csv");
+			FileReader fr = new FileReader(f);
 			
-			BufferedReader br = new BufferedReader(new FileReader(ruta));
+			BufferedReader br = new BufferedReader(fr);
 			
 			List<Persona> personas = new ArrayList<Persona>();
 			Set<String> equipos = new HashSet<String>();
