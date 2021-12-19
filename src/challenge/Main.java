@@ -124,7 +124,7 @@ public class Main {
 	
 	
 	/**
-	 * Devuelve por consola los 5 nombres más comunes entre los hichas de River.
+	 * Devuelve por consola los 5 nombres más comunes entre los hinchas de River.
 	 * 
 	 * @param personas una Lista de objetos de tipo Persona(String nombre, int edad, String equipo, String estadoCivil, String nivelEstudios)
 	 */
